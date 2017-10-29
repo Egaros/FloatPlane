@@ -16,13 +16,17 @@ namespace FloatPlane.Views
         // This url is where we can get the videos
         private const string RssFeedUrl = "https://linustechtips.com/main/forum/91-the-floatplane-club.xml/";
 
-
-
         public class VideoItem
         {
             public string Title { get; set; }
 
             public string Url { get; set; }
+
+            public DateTime Created { get; set; }
+
+            public string Id { get; set; }
+
+            public string ImageUrl { get; set; }
         }
 
         public ObservableCollection<VideoItem> Videos { get; } = new ObservableCollection<VideoItem>();
@@ -52,12 +56,16 @@ namespace FloatPlane.Views
                 var videoList = doc.DocumentElement.SelectNodes("//channel/item");
                 foreach (XmlNode video in videoList)
                 {
+                    // Get required fields
                     var title = video.ChildNodes[0].InnerText;
                     var link = video.ChildNodes[1].InnerText;
                     var description = video.ChildNodes[2].InnerText;
                     var date = DateTime.Parse(video.ChildNodes[4].InnerText);
 
-                    Videos.Add(new VideoItem { Title = title, Url = link });
+                    // The description can sometimes contain the GUID (which makes life really easy and awesome) we need to grab that GUID.
+
+                    //(data-video-guid=\\")[^"]*
+                    Videos.Add(new VideoItem { Title = title, Url = link, Created = date.ToLocalTime() });
                 }
             }
         }
