@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -56,9 +57,11 @@ namespace FloatPlane.Views
 
                 var src = doc.DocumentNode.SelectNodes("//iframe[@src]")[0].Attributes["src"].Value;
 
+                // run in a webview so javascript works
                 var view = new WebView();
                 view.DOMContentLoaded += async (sender, args) =>
                 {
+                    // We have to delay for javascript to set the src value on video
                     await Task.Delay(1000);
 
                     var html = await view.InvokeScriptAsync("eval", new [] { "document.documentElement.outerHTML;" });
@@ -70,7 +73,9 @@ namespace FloatPlane.Views
 
                     var vidsrc = doc.DocumentNode.SelectSingleNode("//*[@id=\"floatplane_player_html5_api\"]").Attributes["src"].Value;
 
-                    this.MediaElement.Source = new Uri(vidsrc);
+                    var mediaSource = await AdaptiveMediaSource.CreateFromUriAsync(new Uri(vidsrc));
+
+                    this.MediaElement.SetMediaStreamSource(mediaSource.MediaSource);
                     this.MediaElement.Play();
 
 

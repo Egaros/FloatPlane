@@ -5,6 +5,8 @@
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock x:Name="TextBlock" FontSize="42" FontWeight="SemiBold" />
-        <MediaElement x:Name="MediaElement" />
+        <MediaElement x:Name="MediaElement"
+                      AreTransportControlsEnabled="True"
+                      AutoPlay="True"/>
     </StackPanel>
 </Page>
