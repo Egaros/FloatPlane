@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
-using HtmlAgilityPack;
-using System.Linq;
-using Windows.UI.Xaml;
+using System.Xml;
 
 namespace FloatPlane.Views
 {
@@ -15,6 +13,11 @@ namespace FloatPlane.Views
     /// </summary>
     public sealed partial class VideoView : Page
     {
+        // This url is where we can get the videos
+        private const string RssFeedUrl = "https://linustechtips.com/main/forum/91-the-floatplane-club.xml/";
+
+
+
         public class VideoItem
         {
             public string Title { get; set; }
@@ -29,53 +32,33 @@ namespace FloatPlane.Views
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             using (var client = new HttpClient())
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, new Uri("https://linustechtips.com/main/forum/91-the-floatplane-club/"));
-                // add any request-specific headers here
-                // more code been omitted
-                var result = await client.SendRequestAsync(request);
+                var result = await client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, new Uri(RssFeedUrl)));
                 result.EnsureSuccessStatusCode();
                 var content = await result.Content.ReadAsStringAsync();
-                // now we can do whatever we need with the html content we got here 
 
-                var doc = new HtmlDocument();
-                doc.LoadHtml(content);
+                // Load the XML
+                var doc = new XmlDocument();
+                doc.LoadXml(content);
 
-
-                var nodes = doc.DocumentNode.SelectSingleNode("/html[1]/body[1]/main[1]/div[1]/div[1]/div[1]/div[3]/div[1]/ol[1]")?.ChildNodes.Where(x => x.NodeType == HtmlNodeType.Element);
-
-                if (nodes != null)
+                // Grab the list of videos and loop through them
+                var videoList = doc.DocumentElement.SelectNodes("//channel/item");
+                foreach (XmlNode video in videoList)
                 {
-                    foreach (var htmlNode in nodes)
-                    {
-                        try
-                        {
-                            var title = htmlNode.ChildNodes[3].ChildNodes[1].ChildNodes[1].ChildNodes[1].InnerText.Trim('\n');
+                    var title = video.ChildNodes[0].InnerText;
+                    var link = video.ChildNodes[1].InnerText;
+                    var description = video.ChildNodes[2].InnerText;
+                    var date = DateTime.Parse(video.ChildNodes[4].InnerText);
 
-                            var uri = htmlNode.ChildNodes[3].ChildNodes[1].ChildNodes[1].ChildNodes[1].Attributes
-                                .FirstOrDefault(x => x.Name == "href");
-
-                            if (!string.IsNullOrEmpty(title))
-                            {
-
-                                Videos.Add(new VideoItem { Title = Uri.UnescapeDataString(title), Url = uri?.Value});
-
-                            }
-                        }
-                        catch
-                        {
-                            // Not today
-                        }
-                    }
+                    Videos.Add(new VideoItem { Title = title, Url = link });
                 }
-
-                
-
-
-                
             }
         }
 
