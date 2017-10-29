@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace FloatPlane.Views
 {
@@ -63,9 +64,24 @@ namespace FloatPlane.Views
                     var date = DateTime.Parse(video.ChildNodes[4].InnerText);
 
                     // The description can sometimes contain the GUID (which makes life really easy and awesome) we need to grab that GUID.
+                    // We get this using regex
+                    var regex = new Regex("(data-video-guid=\\\")[^\"]*");
+                    string guid = regex.Match(description)?.Value;
+
+                    if (!string.IsNullOrEmpty(guid))
+                    {
+                        guid = guid.Split('"')[1];
+                    }
 
                     //(data-video-guid=\\")[^"]*
-                    Videos.Add(new VideoItem { Title = title, Url = link, Created = date.ToLocalTime() });
+                    Videos.Add(new VideoItem
+                    {
+                        Title = title,
+                        Url = link,
+                        Created = date.ToLocalTime(),
+                        ImageUrl = "https://cms.linustechtips.com/get/thumbnails/by_guid/" + guid
+                    });
+
                 }
             }
         }

@@ -8,16 +8,26 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView ItemsSource="{x:Bind Path=Videos}"
+        <GridView ItemsSource="{x:Bind Path=Videos}"
                   IsItemClickEnabled="True"
                   IsMultiSelectCheckBoxEnabled="False"
                   SelectionMode="None"
                   ItemClick="ListViewBase_OnItemClick">
-            <ListView.ItemTemplate>
+            <GridView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Title}" />
+                    <Grid Height="180" Width="320"> 
+                        <Image Source="{Binding ImageUrl}" Width="320" Height="180"  />
+
+                        <StackPanel VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="5"
+                                    Canvas.ZIndex="10"
+                                    Background="#BB000000">
+                            <TextBlock Text="{Binding Title}"  />
+                        </StackPanel>
+                    </Grid>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </GridView.ItemTemplate>
+        </GridView>
     </Grid>
 </Page>
