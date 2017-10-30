@@ -6,6 +6,7 @@
  */
 
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using FloatPlane.Models;
 using FloatPlane.Sources;
 using Microsoft.Toolkit.Uwp;
@@ -27,6 +28,7 @@ namespace FloatPlane.Views
         {
             InitializeComponent();
 
+            NavigationCacheMode = NavigationCacheMode.Enabled;
 
             Videos.OnStartLoading += () =>
             {

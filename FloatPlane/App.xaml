@@ -2,7 +2,9 @@
     x:Class="FloatPlane.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FloatPlane"
+    xmlns:converters="using:FloatPlane.Converters"
     RequestedTheme="Dark">
-
+    <Application.Resources>
+        <converters:DateTimeConverter x:Key="DateTimeConverter" />
+    </Application.Resources>
 </Application>

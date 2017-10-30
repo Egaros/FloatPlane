@@ -96,6 +96,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Helpers\VideoHelper.cs" />
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Sources\RecentVideoModel.cs" />
