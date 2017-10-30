@@ -1,4 +1,11 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿/* 
+ * Copyright (C) 2017 Dominic Maas
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+using Windows.UI.Xaml.Controls;
 using FloatPlane.Models;
 using FloatPlane.Sources;
 using Microsoft.Toolkit.Uwp;
@@ -19,6 +26,17 @@ namespace FloatPlane.Views
         public VideoView()
         {
             InitializeComponent();
+
+
+            Videos.OnStartLoading += () =>
+            {
+                ProgressRing.IsActive = true;
+            };
+
+            Videos.OnEndLoading += () =>
+            {
+                ProgressRing.IsActive = false;
+            };
         }
 
         public void NavigateToVideo(object sender, ItemClickEventArgs e)

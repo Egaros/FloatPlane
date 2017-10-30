@@ -1,6 +1,14 @@
-﻿using System;
+﻿/* 
+ * Copyright (C) 2017 Dominic Maas
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 using Windows.ApplicationModel.Activation;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -29,21 +37,12 @@ namespace FloatPlane
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (!(Window.Current.Content is Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -59,8 +58,7 @@ namespace FloatPlane
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
 
-
-                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested +=
+                SystemNavigationManager.GetForCurrentView().BackRequested +=
                     App_BackRequested;
 
                 rootFrame.Navigated += RootFrame_Navigated;
@@ -68,6 +66,16 @@ namespace FloatPlane
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+
+            // Set active window colors
+            titleBar.ForegroundColor = Windows.UI.Colors.White;
+            titleBar.BackgroundColor = Color.FromArgb(255, 21, 21, 21);
+        
+
+        
         }
 
         private void RootFrame_Navigated(object sender, NavigationEventArgs e)
@@ -90,11 +98,9 @@ namespace FloatPlane
             }
         }
 
-        private void App_BackRequested(object sender,
-            Windows.UI.Core.BackRequestedEventArgs e)
+        private void App_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (rootFrame == null)
+            if (!(Window.Current.Content is Frame rootFrame))
                 return;
 
             // Navigate back if possible, and if the event has not 
@@ -104,16 +110,6 @@ namespace FloatPlane
                 e.Handled = true;
                 rootFrame.GoBack();
             }
-        }
-
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
     }
 }

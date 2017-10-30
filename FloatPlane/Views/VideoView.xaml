@@ -7,23 +7,67 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="#FF151515">
+
+        <ProgressRing Canvas.ZIndex="200" Width="80" Height="80" Foreground="White" x:Name="ProgressRing" IsActive="False" />
+        
+        <TextBlock Text="RECENT UPLOADS"
+                   HorizontalAlignment="Center"
+                   Padding="30,20,30,0"
+                   FontWeight="SemiBold"
+                   Opacity="0.9"
+                   FontSize="22"/>
+
         <GridView ItemsSource="{x:Bind Path=Videos}"
+                  HorizontalAlignment="Center"
+                  Margin="0,70,0,0"
+                  Padding="30,0,30,0"
                   IsItemClickEnabled="True"
                   IsMultiSelectCheckBoxEnabled="False"
                   SelectionMode="None"
                   ItemClick="{x:Bind NavigateToVideo}">
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="180" Width="320"> 
-                        <Image Source="{Binding ImageUrl}" Width="320" Height="180"  />
+                    <Grid Height="200" 
+                          Margin="5"
+                          Width="340" 
+                          BorderThickness="1"
+                          BorderBrush="#FF111111"
+                          Background="#FF222222"> 
+                        <Image Source="{Binding ImageUrl}" 
+                               Stretch="UniformToFill" />
+
+                      
+
+
+                        <Grid>
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#22000000" Offset="0"/>
+                                    <GradientStop Color="#AA000000" Offset="0.7"/>
+                                    <GradientStop Color="#AA000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                          </Grid>
+
+                        <TextBlock Text="&#xE768;" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="28"
+                                   Opacity="0.8"
+                                   AutomationProperties.Name="Favorite" />
 
                         <StackPanel VerticalAlignment="Bottom"
                                     HorizontalAlignment="Stretch"
-                                    Padding="5"
-                                    Canvas.ZIndex="10"
-                                    Background="#BB000000">
-                            <TextBlock Text="{Binding Title}"  />
+                                    Padding="8"
+                                    Canvas.ZIndex="10">
+                            <TextBlock Text="{Binding Title}"
+                                       FontSize="18"
+                                       Margin="0,0,0,2"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="WrapWholeWords"/>
+                                <TextBlock Text="20/10/2017" FontSize="12" FontWeight="SemiBold" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

@@ -1,4 +1,11 @@
-﻿using Microsoft.Toolkit.Collections;
+﻿/* 
+ * Copyright (C) 2017 Dominic Maas
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+using Microsoft.Toolkit.Collections;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,7 +25,7 @@ namespace FloatPlane.Sources
         private const string RssFeedUrl = "https://linustechtips.com/main/forum/91-the-floatplane-club.xml";
 
         // The page we are on
-        private int pageNumber = 1;
+        private int _pageNumber = 1;
 
         public async Task<IEnumerable<VideoModel>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -28,7 +35,7 @@ namespace FloatPlane.Sources
             using (var client = new HttpClient())
             {
                 // Grab the RSS feed with the next page
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(RssFeedUrl + "?page=" + pageNumber));
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(RssFeedUrl + "?page=" + _pageNumber));
 
                 using (var request = await client.SendRequestAsync(requestMessage))
                 {
@@ -55,26 +62,28 @@ namespace FloatPlane.Sources
                         // The description can sometimes contain the GUID (which makes life really easy and awesome) we need to grab that GUID.
                         // We get this using regex
                         var regex = new Regex("(data-video-guid=\\\")[^\"]*");
-                        string guid = regex.Match(description)?.Value;
+                        var guid = regex.Match(description)?.Value;
 
                         // If the guid does exist split by the quotation and take the
                         // second half (data-video-guid=G873FK)
                         if (!string.IsNullOrEmpty(guid))
+                        {
                             guid = guid.Split('"')[1];
 
-                        items.Add(new VideoModel
-                        {
-                            Id = guid,
-                            Title = title,
-                            Url = link,
-                            Created = date.ToLocalTime(),
-                            ImageUrl = "https://cms.linustechtips.com/get/thumbnails/by_guid/" + guid
-                        });
+                            items.Add(new VideoModel
+                            {
+                                Id = guid,
+                                Title = title,
+                                Url = link,
+                                Created = date.ToLocalTime(),
+                                ImageUrl = "https://cms.linustechtips.com/get/thumbnails/by_guid/" + guid
+                            });
+                        }
                     }
                 }
             }
 
-            pageNumber++;
+            _pageNumber++;
 
             return items;
         }
