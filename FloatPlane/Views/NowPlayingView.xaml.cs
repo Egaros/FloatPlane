@@ -6,6 +6,8 @@
  */
 
 using System;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FloatPlane.Helpers;
 using FloatPlane.Models;
@@ -28,10 +30,43 @@ namespace FloatPlane.Views
                 return;
 
             // Get the video URL
+            ProgressRing.IsActive = true;
             var videoUrl = await VideoHelper.GetVideoStreamUrlAsync(param);
+            ProgressRing.IsActive = false;
+
+
+            NowPlaying.Text = param.Title.ToUpper();
+
 
             this.MediaElement.Source = new Uri(videoUrl);
             this.MediaElement.Play();
+        }
+
+        private void MediaElement_OnCurrentStateChanged(object sender, RoutedEventArgs e)
+        {
+            switch (MediaElement.CurrentState)
+            {
+                case MediaElementState.Closed:
+                    ProgressRing.IsActive = false;
+                    break;
+                case MediaElementState.Buffering:
+                    ProgressRing.IsActive = true;
+                    break;
+                case MediaElementState.Opening:
+                    ProgressRing.IsActive = true;
+                    break;
+                case MediaElementState.Paused:
+                    ProgressRing.IsActive = false;
+                    break;
+                case MediaElementState.Playing:
+                    ProgressRing.IsActive = false;
+                    break;
+                case MediaElementState.Stopped:
+                    ProgressRing.IsActive = false;
+                    break;
+            }
+
+
         }
     }
 }

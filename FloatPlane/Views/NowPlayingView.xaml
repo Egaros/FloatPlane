@@ -12,10 +12,23 @@
 
 
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock x:Name="TextBlock" FontSize="42" FontWeight="SemiBold" />
+    <Grid Background="#FF151515">
+        <ProgressRing Canvas.ZIndex="200" Width="80" Height="80" Foreground="White" x:Name="ProgressRing" IsActive="False" />
+
+        <TextBlock Text="NOW PLAYING"
+                   HorizontalAlignment="Center"
+                   Padding="30,20,30,0"
+                   x:Name="NowPlaying"
+                   FontWeight="SemiBold"
+                   Opacity="0.9"
+                   FontSize="22"/>
+
+
         <MediaElement x:Name="MediaElement"
+                      CurrentStateChanged="MediaElement_OnCurrentStateChanged"
+                      AudioCategory="BackgroundCapableMedia"                
+                      Margin="0,70,0,0"                    
                       AreTransportControlsEnabled="True"
                       AutoPlay="True"/>
-    </StackPanel>
+    </Grid>
 </Page>
