@@ -2,6 +2,8 @@
 
 This repo contains an unofficial UWP app for Floatplane. It's still in heavy development but the basics work.
 
+![Screenshot of app](screenshot-floatplane.png)
+
 ## Features
 - Login to your Floatplane account (messy process, but it works).
 - View a list of recent videos with auto loading of more videos when your scroll down.
