@@ -73,9 +73,10 @@ namespace FloatPlane
             // Set active window colors
             titleBar.ForegroundColor = Windows.UI.Colors.White;
             titleBar.BackgroundColor = Color.FromArgb(255, 21, 21, 21);
-        
+            titleBar.ButtonBackgroundColor = Color.FromArgb(255, 21, 21, 21);
 
-        
+
+
         }
 
         private void RootFrame_Navigated(object sender, NavigationEventArgs e)
