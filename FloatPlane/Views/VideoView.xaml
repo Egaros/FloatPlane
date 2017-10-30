@@ -12,7 +12,7 @@
                   IsItemClickEnabled="True"
                   IsMultiSelectCheckBoxEnabled="False"
                   SelectionMode="None"
-                  ItemClick="ListViewBase_OnItemClick">
+                  ItemClick="{x:Bind NavigateToVideo}">
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Height="180" Width="320"> 

@@ -21,10 +21,11 @@ namespace FloatPlane.Views
             InitializeComponent();
         }
 
-        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+        public void NavigateToVideo(object sender, ItemClickEventArgs e)
         {
+            // Grab the video item
             var item = e.ClickedItem as VideoModel;
-
+            // Navigate to the now playing page with the video
             Frame.Navigate(typeof(NowPlayingView), item);
         }
     }
