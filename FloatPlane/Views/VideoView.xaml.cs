@@ -1,11 +1,7 @@
-﻿
-using System;
-using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Web.Http;
-using System.Xml;
-using System.Text.RegularExpressions;
+﻿using Windows.UI.Xaml.Controls;
+using FloatPlane.Models;
+using FloatPlane.Sources;
+using Microsoft.Toolkit.Uwp;
 
 namespace FloatPlane.Views
 {
@@ -14,81 +10,20 @@ namespace FloatPlane.Views
     /// </summary>
     public sealed partial class VideoView : Page
     {
-        // This url is where we can get the videos
-        private const string RssFeedUrl = "https://linustechtips.com/main/forum/91-the-floatplane-club.xml/";
-
-        public class VideoItem
-        {
-            public string Title { get; set; }
-
-            public string Url { get; set; }
-
-            public DateTime Created { get; set; }
-
-            public string Id { get; set; }
-
-            public string ImageUrl { get; set; }
-        }
-
-        public ObservableCollection<VideoItem> Videos { get; } = new ObservableCollection<VideoItem>();
+        /// <summary>
+        /// This source collection allows us to view all float plane videos 
+        /// using the RSS feed. Currently this grabs the entire float plane history.
+        /// </summary>
+        public IncrementalLoadingCollection<RecentVideoSource, VideoModel> Videos { get; } = new IncrementalLoadingCollection<RecentVideoSource, VideoModel>();
 
         public VideoView()
         {
             InitializeComponent();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="e"></param>
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
-        {
-            using (var client = new HttpClient())
-            {
-                var result = await client.SendRequestAsync(new HttpRequestMessage(HttpMethod.Get, new Uri(RssFeedUrl)));
-                result.EnsureSuccessStatusCode();
-                var content = await result.Content.ReadAsStringAsync();
-
-                // Load the XML
-                var doc = new XmlDocument();
-                doc.LoadXml(content);
-
-                // Grab the list of videos and loop through them
-                var videoList = doc.DocumentElement.SelectNodes("//channel/item");
-                foreach (XmlNode video in videoList)
-                {
-                    // Get required fields
-                    var title = video.ChildNodes[0].InnerText;
-                    var link = video.ChildNodes[1].InnerText;
-                    var description = video.ChildNodes[2].InnerText;
-                    var date = DateTime.Parse(video.ChildNodes[4].InnerText);
-
-                    // The description can sometimes contain the GUID (which makes life really easy and awesome) we need to grab that GUID.
-                    // We get this using regex
-                    var regex = new Regex("(data-video-guid=\\\")[^\"]*");
-                    string guid = regex.Match(description)?.Value;
-
-                    if (!string.IsNullOrEmpty(guid))
-                    {
-                        guid = guid.Split('"')[1];
-                    }
-
-                    //(data-video-guid=\\")[^"]*
-                    Videos.Add(new VideoItem
-                    {
-                        Title = title,
-                        Url = link,
-                        Created = date.ToLocalTime(),
-                        ImageUrl = "https://cms.linustechtips.com/get/thumbnails/by_guid/" + guid
-                    });
-
-                }
-            }
-        }
-
         private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var item = e.ClickedItem as VideoItem;
+            var item = e.ClickedItem as VideoModel;
 
             Frame.Navigate(typeof(NowPlayingView), item);
         }

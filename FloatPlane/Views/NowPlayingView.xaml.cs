@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using HtmlAgilityPack;
+using FloatPlane.Models;
 
 namespace FloatPlane.Views
 {
@@ -32,8 +33,18 @@ namespace FloatPlane.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!(e.Parameter is VideoView.VideoItem param))
+            if (!(e.Parameter is VideoModel param))
                 return;
+
+            if (!string.IsNullOrEmpty(param.Id))
+            {
+                var mediaSource = new Uri($"https://linustechtips.com/main/applications/floatplane/interface/video_url.php?video_guid={param.Id}&video_quality=1080&download=1");
+
+                this.MediaElement.Source = mediaSource;
+                this.MediaElement.Play();
+
+                return;
+            }
 
             TextBlock.Text = param.Title;
 
