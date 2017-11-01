@@ -13,9 +13,9 @@ namespace FloatPlane.Views
     /// <summary>
     /// This page is designed to let the user login. This is required for scraping the website for videos.
     /// </summary>
-    public sealed partial class MainPage
+    public sealed partial class LoginView
     {
-        public MainPage()
+        public LoginView()
         {
             InitializeComponent();
         }

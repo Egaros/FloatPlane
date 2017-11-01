@@ -18,7 +18,7 @@ namespace FloatPlane.Converters
             var date = (DateTime) value;
 
 
-            return date.ToString("g");
+            return date.ToLocalTime().ToString("g");
 
         }
 

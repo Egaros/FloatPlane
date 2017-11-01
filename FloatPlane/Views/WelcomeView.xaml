@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="FloatPlane.Views.WelcomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FloatPlane.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <StackPanel Background="#FF151515">
+        <TextBlock Text="WELCOME TO FLOATPLANE"
+                   VerticalAlignment="Top"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Padding="30,20,30,0"
+                   FontWeight="SemiBold"
+                   Opacity="0.9"
+                   FontSize="22"/>
+        <TextBlock Text="Unofficial UWP App" 
+                   TextAlignment="Center"
+                   Opacity="0.6"
+                   HorizontalAlignment="Center"
+                   Margin="0,10,0,0"/>
+
+        <StackPanel MaxWidth="800" Margin="10,50,10,0">
+            <TextBlock Margin="0,5,0,0" 
+                       Text="Welcome to the unofficial UWP app for FloatPlane. This app lets you view FloatPlane videos in an easy to use app, and also download FloatPlane videos into a chosen location (for example a PLEX media server)."
+                       TextWrapping="Wrap"/>
+
+            <TextBlock Margin="0,5,0,0"
+                       Text="Please note that this app is under heavy development (and everything will probably break when the official site launches)."
+                       TextWrapping="Wrap"/>
+
+            <TextBlock Margin="0,5,0,0"
+                       Text="How to login: To view FloatPlane content, you must first login. This is done by directing you to the fourms where you can login as usual. Once logged in to the forums, click 'I have logged in' to view your FloatPlane content."
+                       TextWrapping="Wrap"/>
+            <Button Margin="0,25,0,0" Padding="40,5" Content="Login" Click="ButtonBase_OnClick" HorizontalAlignment="Center" />
+
+            <TextBlock Margin="0,25,0,0"
+                       Text="If you have logged in, you can also setup FloatPlane UWP to download floatplane videos to a storage location (720p only). Click the button below to get started."
+                       TextWrapping="Wrap"/>
+
+            <Button Margin="0,25,0,0" Padding="40,5" Content="Setup Automatic Download" HorizontalAlignment="Center" Click="AutomaticDownloadSetup" />
+            
+
+        </StackPanel>
+        
+        
+    </StackPanel>
+</Page>

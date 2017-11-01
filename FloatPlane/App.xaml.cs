@@ -5,14 +5,19 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 
+using System;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using FloatPlane.Models;
+using FloatPlane.Sources;
 using FloatPlane.Views;
+using Microsoft.Toolkit.Uwp.Helpers;
 
 namespace FloatPlane
 {
@@ -55,7 +60,7 @@ namespace FloatPlane
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(WelcomeView), e.Arguments);
                 }
 
                 SystemNavigationManager.GetForCurrentView().BackRequested +=
@@ -75,8 +80,8 @@ namespace FloatPlane
             titleBar.BackgroundColor = Color.FromArgb(255, 21, 21, 21);
             titleBar.ButtonBackgroundColor = Color.FromArgb(255, 21, 21, 21);
 
-
-
+            // Background task runs every 60 minutes to look for fresh content
+            var registered = BackgroundTaskHelper.Register("NewContentChecker", new TimeTrigger(60, false));
         }
 
         private void RootFrame_Navigated(object sender, NavigationEventArgs e)
@@ -112,5 +117,56 @@ namespace FloatPlane
                 rootFrame.GoBack();
             }
         }
+
+        protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+
+            var deferral = args.TaskInstance.GetDeferral();
+
+            var helper = new LocalObjectStorageHelper();
+
+            if (args.TaskInstance.Task.Name == "NewContentChecker")
+            {
+                // Process is enabled
+                if (helper.KeyExists(EnableDownload) && helper.Read(EnableDownload, false))
+                {
+                    var lastCheckTime = helper.Read(LastCheckTime, DateTime.UtcNow);
+                    var source = new RecentVideoSource();
+
+                    // Check that a folder has been picked
+                    var folder = await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocationFolder);
+
+                    if (folder != null)
+                    {
+                        // Get latest videos
+                        var videos = await source.GetPagedItemsAsync(0, 10);
+
+                        foreach (var videoModel in videos)
+                        {
+                            if (videoModel.Created <= lastCheckTime)
+                                continue;
+
+                            System.Diagnostics.Debug.WriteLine("NEW VIDEO: " + videoModel.Title);
+
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Folder is null");
+
+                    }
+                }
+            }
+
+            // Save the key
+            helper.Save(LastCheckTime, DateTime.UtcNow);
+
+            deferral.Complete();
+        }
+
+        public static string LastCheckTime = "LastCheckTime";
+        public static string EnableDownload = "EnableDownload";
+        public static string SaveLocationFolder = "SaveLocation";
     }
 }

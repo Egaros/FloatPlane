@@ -1,8 +1,12 @@
 ﻿<Page
-    x:Class="FloatPlane.Views.MainPage"
+    x:Class="FloatPlane.Views.LoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+    <Page.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
     <Grid  Background="#FF151515">
         <!-- Navigate to web scraping page -->
         <Button VerticalAlignment="Bottom" 
