@@ -14,8 +14,24 @@ namespace FloatPlane.Dialogs
         public SetupDownloadDialog()
         {
             InitializeComponent();
+
+            var helper = new LocalObjectStorageHelper();
+            EnableBackgroundDownloading.IsOn = helper.Read(App.EnableDownload, false);
+
+
+            Loaded += SetupDownloadDialog_Loaded;
+
         }
 
+        private  async void SetupDownloadDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            var folder = await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFolderAsync(App.SaveLocationFolder);
+            if (folder != null)
+            {
+                DownloadPath.Text = "Download Path: " + folder.Path;
+
+            }
+        }
 
         private void CancelDialog(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

@@ -1,5 +1,7 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using FloatPlane.Dialogs;
 
 namespace FloatPlane.Views
 {
@@ -18,9 +20,9 @@ namespace FloatPlane.Views
             Frame.Navigate(typeof(LoginView));
         }
 
-        private void AutomaticDownloadSetup(object sender, RoutedEventArgs e)
+        private  async void AutomaticDownloadSetup(object sender, RoutedEventArgs e)
         {
-
+            await new SetupDownloadDialog().ShowAsync();
         }
     }
 }

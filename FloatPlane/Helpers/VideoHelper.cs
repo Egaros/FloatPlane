@@ -13,13 +13,13 @@ namespace FloatPlane.Helpers
 {
     public static class VideoHelper
     {
-        public static async Task<string> GetVideoStreamUrlAsync(VideoModel video)
+        public static async Task<string> GetVideoStreamUrlAsync(VideoModel video, bool download = false)
         {
             // Get the video URL (720p for now)
             using (var client = new HttpClient())
             {
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get,
-                    new Uri($"https://linustechtips.com/main/applications/floatplane/interface/video_url.php?video_guid={video.Id}&video_quality=720&download=0"));
+                    new Uri($"https://linustechtips.com/main/applications/floatplane/interface/video_url.php?video_guid={video.Id}&video_quality=720&download=" + (download ? "1" : "0")));
 
                 using (var request = await client.SendRequestAsync(requestMessage))
                 {

@@ -6,14 +6,18 @@
  */
 
 using System;
+using System.Threading;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
+using Windows.Networking.BackgroundTransfer;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using FloatPlane.Helpers;
 using FloatPlane.Models;
 using FloatPlane.Sources;
 using FloatPlane.Views;
@@ -134,6 +138,8 @@ namespace FloatPlane
                     var lastCheckTime = helper.Read(LastCheckTime, DateTime.UtcNow);
                     var source = new RecentVideoSource();
 
+                    var downloader = new BackgroundDownloader();
+
                     // Check that a folder has been picked
                     var folder = await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocationFolder);
 
@@ -149,6 +155,17 @@ namespace FloatPlane
 
                             System.Diagnostics.Debug.WriteLine("NEW VIDEO: " + videoModel.Title);
 
+                            var file = await folder.CreateFileAsync(videoModel.Id + ".mp4", CreationCollisionOption.ReplaceExisting);
+                            
+
+                            var remoteVideoFile = await VideoHelper.GetVideoStreamUrlAsync(videoModel, true);
+                            var operation = downloader.CreateDownload(new Uri(remoteVideoFile), file);
+
+
+                            var progressCallback = new Progress<DownloadOperation>(ProgressCallback);
+                            await operation.StartAsync().AsTask(CancellationToken.None, progressCallback);
+                            
+
                         }
                     }
                     else
@@ -163,6 +180,11 @@ namespace FloatPlane
             helper.Save(LastCheckTime, DateTime.UtcNow);
 
             deferral.Complete();
+        }
+
+        private void ProgressCallback(DownloadOperation obj)
+        {
+            System.Diagnostics.Debug.WriteLine("Downloading... " + obj.Progress.BytesReceived / obj.Progress.TotalBytesToReceive * 100);
         }
 
         public static string LastCheckTime = "LastCheckTime";
