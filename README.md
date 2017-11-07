@@ -7,7 +7,8 @@ This repo contains an unofficial UWP app for Floatplane. It's still in heavy dev
 ## Features
 - Login to your Floatplane account (messy process, but it works).
 - View a list of recent videos with auto loading of more videos when your scroll down.
-- Watch videos on 1080p.
+- Watch videos at 720p.
+- Auto download videos to specified location.
 
 ## Todo
 - Split recent video feed into the three channels.
