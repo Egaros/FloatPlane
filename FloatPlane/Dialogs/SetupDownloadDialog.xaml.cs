@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,7 +6,7 @@ using Microsoft.Toolkit.Uwp.Helpers;
 
 namespace FloatPlane.Dialogs
 {
-    public sealed partial class SetupDownloadDialog : ContentDialog
+    public sealed partial class SetupDownloadDialog
     {
 
         public SetupDownloadDialog()

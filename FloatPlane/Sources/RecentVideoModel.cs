@@ -75,7 +75,7 @@ namespace FloatPlane.Sources
                                 Id = guid,
                                 Title = title,
                                 Url = link,
-                                Created = date,
+                                Created = date.ToLocalTime(),
                                 ImageUrl = "https://cms.linustechtips.com/get/thumbnails/by_guid/" + guid
                             });
                         }

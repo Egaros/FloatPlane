@@ -16,7 +16,7 @@ namespace FloatPlane.Views
     /// <summary>
     /// Shows a list of float plane videos
     /// </summary>
-    public sealed partial class VideoView : Page
+    public sealed partial class VideoView
     {
         /// <summary>
         /// This source collection allows us to view all float plane videos 

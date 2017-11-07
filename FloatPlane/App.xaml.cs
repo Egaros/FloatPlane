@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.IO;
 using System.Threading;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
@@ -13,15 +14,16 @@ using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using FloatPlane.Helpers;
-using FloatPlane.Models;
 using FloatPlane.Sources;
 using FloatPlane.Views;
 using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace FloatPlane
 {
@@ -80,12 +82,12 @@ namespace FloatPlane
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
 
             // Set active window colors
-            titleBar.ForegroundColor = Windows.UI.Colors.White;
+            titleBar.ForegroundColor = Colors.White;
             titleBar.BackgroundColor = Color.FromArgb(255, 21, 21, 21);
             titleBar.ButtonBackgroundColor = Color.FromArgb(255, 21, 21, 21);
 
             // Background task runs every 60 minutes to look for fresh content
-            var registered = BackgroundTaskHelper.Register("NewContentChecker", new TimeTrigger(60, false));
+            BackgroundTaskHelper.Register("FloatPlane.ContentChecker", new TimeTrigger(60, false), true);
         }
 
         private void RootFrame_Navigated(object sender, NavigationEventArgs e)
@@ -130,12 +132,12 @@ namespace FloatPlane
 
             var helper = new LocalObjectStorageHelper();
 
-            if (args.TaskInstance.Task.Name == "NewContentChecker")
+            if (args.TaskInstance.Task.Name == "FloatPlane.ContentChecker")
             {
                 // Process is enabled
                 if (helper.KeyExists(EnableDownload) && helper.Read(EnableDownload, false))
                 {
-                    var lastCheckTime = helper.Read(LastCheckTime, DateTime.UtcNow);
+                    var lastCheckTime = helper.Read(LastCheckTime, DateTime.UtcNow).ToLocalTime();
                     var source = new RecentVideoSource();
 
                     var downloader = new BackgroundDownloader();
@@ -153,25 +155,68 @@ namespace FloatPlane
                             if (videoModel.Created <= lastCheckTime)
                                 continue;
 
+                            var fileName = videoModel.Title;
+
+                            // Remove invalid characters from title to use as a file name
+                            foreach (var c in Path.GetInvalidFileNameChars())
+                            {
+                                if (!fileName.Contains(c.ToString()))
+                                    continue;
+
+                                fileName = fileName.Remove(fileName.IndexOf(c), 1);
+                            }
+
                             System.Diagnostics.Debug.WriteLine("NEW VIDEO: " + videoModel.Title);
 
-                            var file = await folder.CreateFileAsync(videoModel.Id + ".mp4", CreationCollisionOption.ReplaceExisting);
-                            
+
+                            var file = await folder.CreateFileAsync(fileName + ".mp4", CreationCollisionOption.OpenIfExists);
 
                             var remoteVideoFile = await VideoHelper.GetVideoStreamUrlAsync(videoModel, true);
                             var operation = downloader.CreateDownload(new Uri(remoteVideoFile), file);
 
+                            // Construct the visuals of the toast
+                            var toastContent = new ToastContent
+                            {
+                                Visual = new ToastVisual
+                                {
+                                    BindingGeneric = new ToastBindingGeneric
+                                    {
+                                        Children =
+                                        {
+                                            new AdaptiveText
+                                            {
+                                                Text = videoModel.Title
+                                            },
 
+                                            new AdaptiveText
+                                            {
+                                                Text = "New Video! Saving to your library :)"
+                                            },
+
+                                            new AdaptiveImage
+                                            {
+                                               Source = videoModel.ImageUrl
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+
+                            await DispatcherHelper.ExecuteOnUIThreadAsync(() =>
+                            {
+                                // Show the toast
+                                var toast = new ToastNotification(toastContent.GetXml());
+                                ToastNotificationManager.CreateToastNotifier().Show(toast);
+                            });
+
+                            // Start downloading
                             var progressCallback = new Progress<DownloadOperation>(ProgressCallback);
                             await operation.StartAsync().AsTask(CancellationToken.None, progressCallback);
-                            
-
                         }
                     }
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("Folder is null");
-
                     }
                 }
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using FloatPlane.Dialogs;
 
 namespace FloatPlane.Views
@@ -8,7 +7,7 @@ namespace FloatPlane.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class WelcomeView : Page
+    public sealed partial class WelcomeView
     {
         public WelcomeView()
         {

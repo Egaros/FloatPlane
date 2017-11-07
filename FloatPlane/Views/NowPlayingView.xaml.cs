@@ -38,8 +38,8 @@ namespace FloatPlane.Views
             NowPlaying.Text = param.Title.ToUpper();
 
 
-            this.MediaElement.Source = new Uri(videoUrl);
-            this.MediaElement.Play();
+            MediaElement.Source = new Uri(videoUrl);
+            MediaElement.Play();
         }
 
         private void MediaElement_OnCurrentStateChanged(object sender, RoutedEventArgs e)

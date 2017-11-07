@@ -6,7 +6,6 @@
  */
 
 using System;
-using System.Globalization;
 using Windows.UI.Xaml.Data;
 
 namespace FloatPlane.Converters
