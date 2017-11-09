@@ -168,7 +168,6 @@ namespace FloatPlane
 
                             System.Diagnostics.Debug.WriteLine("NEW VIDEO: " + videoModel.Title);
 
-
                             var file = await folder.CreateFileAsync(fileName + ".mp4", CreationCollisionOption.OpenIfExists);
 
                             var remoteVideoFile = await VideoHelper.GetVideoStreamUrlAsync(videoModel, true);
@@ -185,7 +184,7 @@ namespace FloatPlane
                                         {
                                             new AdaptiveText
                                             {
-                                                Text = videoModel.Title
+                                                Text = fileName
                                             },
 
                                             new AdaptiveText
@@ -202,12 +201,9 @@ namespace FloatPlane
                                 }
                             };
 
-                            await DispatcherHelper.ExecuteOnUIThreadAsync(() =>
-                            {
-                                // Show the toast
-                                var toast = new ToastNotification(toastContent.GetXml());
-                                ToastNotificationManager.CreateToastNotifier().Show(toast);
-                            });
+                            // Show the toast
+                            var toast = new ToastNotification(toastContent.GetXml());
+                            ToastNotificationManager.CreateToastNotifier().Show(toast);
 
                             // Start downloading
                             var progressCallback = new Progress<DownloadOperation>(ProgressCallback);
