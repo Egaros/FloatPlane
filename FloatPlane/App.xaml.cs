@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Navigation;
 using FloatPlane.Helpers;
 using FloatPlane.Sources;
 using FloatPlane.Views;
+using Microsoft.HockeyApp;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 
@@ -39,6 +40,8 @@ namespace FloatPlane
         public App()
         {
             InitializeComponent();
+
+            HockeyClient.Current.Configure("f9821c6805724641aaf6cc47c7a99f61");
         }
 
         /// <summary>
@@ -85,6 +88,8 @@ namespace FloatPlane
             titleBar.ForegroundColor = Colors.White;
             titleBar.BackgroundColor = Color.FromArgb(255, 21, 21, 21);
             titleBar.ButtonBackgroundColor = Color.FromArgb(255, 21, 21, 21);
+
+            HockeyClient.Current.TrackEvent("App Launch");
 
             // Background task runs every 60 minutes to look for fresh content
             BackgroundTaskHelper.Register("FloatPlane.ContentChecker", new TimeTrigger(60, false), true);

@@ -201,6 +201,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HockeySDK.UWP">
+      <Version>4.1.6</Version>
+    </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.6.3</Version>
     </PackageReference>
