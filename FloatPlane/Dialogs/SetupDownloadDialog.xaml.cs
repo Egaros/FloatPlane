@@ -23,11 +23,18 @@ namespace FloatPlane.Dialogs
 
         private  async void SetupDownloadDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            var folder = await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFolderAsync(App.SaveLocationFolder);
-            if (folder != null)
+            try
             {
-                DownloadPath.Text = "Download Path: " + folder.Path;
+                var folder = await Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.GetFolderAsync(App.SaveLocationFolder);
+                if (folder != null)
+                {
+                    DownloadPath.Text = "Download Path: " + folder.Path;
 
+                }
+            }
+            catch
+            {
+                // Ignore
             }
         }
 
@@ -40,8 +47,6 @@ namespace FloatPlane.Dialogs
         {
             var helper = new LocalObjectStorageHelper();
             helper.Save(App.EnableDownload, EnableBackgroundDownloading.IsOn);
-
-
         }
 
         private async void PickStorageLocation(object sender, RoutedEventArgs e)
